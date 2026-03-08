@@ -1,0 +1,121 @@
+---
+title: "Activity 05 - Customizing Spring Graphs"
+author: "STS 2300"
+date: 'Updated: 2026-03-06'
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message = FALSE, warning = FALSE}
+library(ggplot2)
+library(readr)
+library(dplyr)
+```
+
+---
+
+For this activity, you will choose one of the data sets below (or another Spring themed data set you know of) and create a graph with your own customized theme. You will upload their final graph using the link on Moodle. I will then collect all the graphs, and we'll hold our own March Madness style tournament to vote on the best graph! The winner will get a prize (still TBD). 
+
+**To have this activity marked as "Complete"**: You only need to customize **one** graph. To receive a complete, I expect you to make more than 1-2 simple changes. 
+
+[This website](https://henrywang.nl/ggplot2-theme-elements-demonstration/) contains a nice example of elements of a theme that we can control.
+
+[Chapter 12](https://r4ds.hadley.nz/communication) of R for Data Science may also be useful.
+
+Since the focus is on customizing themes, scales, etc. (and not necessarily the graphs themselves), I've created a sample graph for each data set that you are welcome to use. You can find an example of a customized Elon theme in Notes 05. You may want to use this as a template to get started.
+
+---
+
+# Vegetable Garden
+
+This dataset from [TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/main/data/2024/2024-05-28/readme.md) contains data on Lisa Lendway's vegetable garden from summer 2020 and summer 2021. 
+
+Below is code to read it into R and to summarize the harvest in 2021. I created a new variable called `wt_per` that takes the weight of the harvest (in grams) divided by the number of vegetables harvested, split by type of vegetable. I think filtered out vegetables with low values of `wt_per`.
+
+```{r, warning = FALSE, message = FALSE, eval = TRUE}
+harvest_2021 <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2024/2024-05-28/harvest_2021.csv')
+
+harvest_summ <- harvest_2021 |> 
+  summarize(wt_per = sum(weight) / n(),
+            .by = vegetable) |> 
+  filter(wt_per >= 200)
+
+ggplot(data = harvest_summ) + 
+  geom_col(aes(x = wt_per, y = vegetable))
+```
+
+---
+
+# Global temperatures
+
+This dataset from [TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-07-11/readme.md) looks at global temperatures in the Northern Hemisphere. Specifically, it is tracking the deviation in mean monthly temperature from the 1951-1980 mean. The MAM variable combines March, April, and May into one average.
+
+```{r}
+nh_temps <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-07-11/nh_temps.csv')
+
+ggplot(nh_temps, aes(x = Year, y = MAM)) +
+  geom_point() +
+  geom_line() +
+  geom_hline(yintercept = 0) +
+  labs(title = "Average monthly temp above / below 1951-1980 mean",
+       subtitle = "March, April, and May",
+       y = "Average deviation from 1951 - 1980 mean")
+```
+
+---
+
+# NC Weather Forecasts
+
+Official Spring: March 20 to June 20
+
+```{r}
+library(lubridate)
+
+weather_forecasts <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-12-20/weather_forecasts.csv') |> 
+  mutate(Spring = month(date) %in% c(3, 4, 5, 6)) |> 
+  filter(state == "NC", Spring == TRUE )
+
+ggplot(weather_forecasts, aes(x = observed_temp, y = city, fill = high_or_low)) +
+  geom_boxplot() +
+  labs(title = "Spring Temperatures")
+```
+
+
+# Candy power rankings
+
+This dataset from [FiveThirtyEight](https://github.com/fivethirtyeight/data/tree/master/candy-power-ranking) comes from a survey where people chose which candy they preferred in head-to-head matchups. The data contains information on earch candy like whether it is chocolate, whether it contains nougat, and how often people chose it over another piece of candy in a head to head matchup. 
+
+Below is code to read it into R and to get started. I've converted most variables to character variables where "1" means "yes" and "0" means "no".
+
+```{r, warning = FALSE, message = FALSE, eval = TRUE}
+candy <- readr::read_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/candy-power-ranking/candy-data.csv") |> 
+  mutate_at(vars(chocolate:pluribus), as.character)
+
+ggplot(candy) +
+  geom_boxplot(aes(x = chocolate, y = winpercent, fill = peanutyalmondy))
+```
+
+---
+
+# Olympics 2026 Scheduling
+
+This dataset from [TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/main/data/2026/2026-02-10/readme.md) contains scheduling information for the 2026 Winter Olympics. It has data on every event (medal, training, or otherwise) and when it was held. Below, I provide code that summarizes the number of events per day of the week to explore which days had more events. I split the bars to show the count of medal events against the rest of the events.
+
+```{r}
+schedule <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2026/2026-02-10/schedule.csv')
+
+events_per_day <- schedule |> 
+  summarize(total_events = n(),
+            .by = c(day_of_week, is_medal_event))
+
+ggplot(events_per_day) + 
+  geom_col(aes(x = total_events, y = day_of_week, 
+               fill = is_medal_event))
+```
+
+
+
