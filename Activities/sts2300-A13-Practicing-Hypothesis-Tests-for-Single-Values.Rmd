@@ -1,0 +1,156 @@
+---
+title: "Activity 13 - Practicing Hypothesis Tests for Single Values"
+author: "STS 2300"
+date: 'Updated: 2026-04-25'
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Below are the packages you will need for this activity. If you use other packages, you can add them here.
+
+```{r, message = FALSE}
+library(ggplot2)
+library(infer)
+library(dplyr)
+```
+
+---
+
+**To have this activity marked as "Complete"**: You need to complete **either** Part 1 (hypothesis test for $p$) or Part 2 (hypothesis test for $\mu$). I encourage you to attempt both, but only one is required for this activity. However, if you attempt both, that can be factored into our end-of-semester discussion on your grade. If you only choose one, focus on the interval (means or proportions) that you feel like you need most practice with.
+
+Which Part(s) did you complete? ____
+
+---
+
+# Part 1 - Fan Attendance and Home Field Advantage
+
+Let's suppose that we're interested in studying the concept of home field advantage in Major League Baseball during the 2020 season when fan attendance was restricted due to COVID-19. If there's no such thing as home field advantage, the home team will win just as often as the away team (half the time). If there *is* an advantage to the home team, they will win over half the time. To carry out this test, use a significance level of $\alpha = 0.05$.
+
+
+<br>
+
+
+1. **Step 1** - Write out appropriate null and alternative hypotheses below. Define $p$ for this specific example.
+
+**$H_0:$**
+
+**$H_a:$**
+
+**p =**
+
+<br>
+
+
+2. **Step 2** - The code below will read data from the 2020 MLB season into R. We will consider this to be a random sample of the *possible* games that could have been played without fans. Create a graphical and numeric summary of this data in context of our example. (Note: We are interested in the `HomeWon` variable and how often it is `TRUE`. The variable has been converted from logical to character to prevent issues with the `infer` package.)
+
+```{r}
+mlb <- read.csv("https://raw.githubusercontent.com/nbussberg/STS2300-Spring2026/refs/heads/main/Data/mlb_2020.csv") |> 
+  mutate(HomeWon = as.factor(HomeWon))
+```
+
+$\hat{p} =$
+
+<br>
+
+
+3. **Step 3** - Use the `infer` package to create a null distribution and shade in your p-value on the picture. Then calculate the p-value. Remove `eval = FALSE` when you're ready to run your code.
+
+```{r, eval = FALSE}
+set.seed()
+mlb_null <- mlb |> 
+  specify() |> 
+  hypothesize() |> 
+  generate() |> 
+  calculate()
+```
+
+**p-value = **
+
+<br>
+
+
+4. **Step 4** - Write a formal conclusion based on your p-value.
+
+**Conclusion: **
+
+<br>
+
+
+6. Try using the `prop.test()` function to carry out a theory-based hypothesis test. Do you get similar results?
+
+```{r}
+
+```
+
+<br>
+
+
+
+---
+
+# Part 2 - Prius Mileage
+
+Suppose Toyota is claiming that their newest Prius Prime model gets over 100 miles per gallon on average. A car review website plans to test this claim. (Use $\alpha = 0.10$ for your significance level)
+
+<br>
+
+
+7. **Step 1** - Write out the appropriate hypotheses for this problem. Define any parameters below. (Note: You will not be using $p$ in this example.)
+
+$H_0:$
+
+$H_A:$
+
+**Define parameter(s):**
+
+<br>
+
+
+8. **Step 2** - Gather and summarize data
+
+The car review website has gathered data from 19 Prius Prime owners. The `average_mpg` variable is what each owner reported as their average miles per gallon over the past month. Below is the code to read in this data. 
+
+Generate a graph to view the data and then calculate an appropriate statistic to summarize the data in relation to these hypotheses. 
+
+```{r}
+prius <- read.csv("https://www.openintro.org/data/csv/prius_mpg.csv")
+```
+
+**Statistic:**
+
+
+<br>
+
+
+9. **Step 3** - Use the `infer` package to generate a null distribution. Visualize your p-value on the distribution and calculate the p-value.
+
+```{r}
+# Remember to set a seed
+```
+
+**p-value =**
+
+<br>
+
+
+10. **Step 4** - Write a conclusion for your hypothesis test Make sure that you address each of the important elements mentioned in class.
+
+**Conclusion:**
+
+
+<br>
+
+
+
+11. Practice write code to use an appropriate function to calculate a p-value for a theory-based test for this example.
+
+```{r}
+
+```
+
